@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -69,6 +71,7 @@ public class BuilderFrame extends JFrame implements ActionListener
   private JLabel imageLabel;
 
   private JTextField autoOutput;
+  private JButton copy;
 
   private AutoBuilder builder;
 
@@ -84,9 +87,7 @@ public class BuilderFrame extends JFrame implements ActionListener
 
     initFaceButtons();
 
-    autoOutput = new JTextField("");
-    autoOutput.setEditable(false);
-    add(autoOutput);
+    initOutputText();
 
     initFrame();
 
@@ -232,6 +233,17 @@ public class BuilderFrame extends JFrame implements ActionListener
     reefFaces.add(rl);
   }
 
+  private void initOutputText()
+  {
+    autoOutput = new JTextField("");
+    autoOutput.setEditable(false);
+    add(autoOutput);
+
+    copy = new JButton("Copy Auto String");
+    copy.addActionListener(this);
+    add(copy);
+  }
+
   @Override
   public void paint(Graphics g) 
   {
@@ -292,12 +304,19 @@ public class BuilderFrame extends JFrame implements ActionListener
     autoOutput.setSize(945, autoOutput.getHeight());
     autoOutput.setLocation(0, getHeight() - (autoOutput.getHeight() * 3));
     autoOutput.setText(builder.getString());
+
+    copy.setMargin(new Insets(1, 1, 1, 1));
+    copy.setLocation((getWidth() - copy.getWidth()) / 2, autoOutput.getY() - copy.getHeight());
   }
 
   @Override
   public void actionPerformed(ActionEvent e) 
   {
-    if (e.getSource() instanceof JButton button) 
+    if (e.getSource() == copy)
+    {
+      Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(autoOutput.getText()), null);
+    }
+    else if (e.getSource() instanceof JButton button) 
     {
       if (simpleButtonList.stream().anyMatch(simpleButton -> e.getSource() == simpleButton)) 
       {
