@@ -81,15 +81,15 @@ public class BuilderFrame extends JFrame implements ActionListener
   {
     builder = new AutoBuilder();
     
-    initFieldImage();
-
     initSimpleButtons();
-
+    
     initFaceButtons();
-
+    
     initOutputText();
-
+    
     initFrame();
+
+    initFieldImage();
 
     reefHoriMidPos = (getWidth() - reefFaceButtonSize) / 2;
     reefVertMidPos = getHeight() - reefVertMidOffset;
@@ -249,7 +249,6 @@ public class BuilderFrame extends JFrame implements ActionListener
   {
     Insets reefInsets = new Insets(0, 0, 0, 0);
 
-    super.paint(g);
     imageLabel.setBounds(0, 0 - 900, 945, 1800);
     p.setBounds(getWidth() - 137 - buttonSize, 0 + 125, buttonSize, buttonSize);
 
@@ -307,6 +306,8 @@ public class BuilderFrame extends JFrame implements ActionListener
 
     copy.setMargin(new Insets(1, 1, 1, 1));
     copy.setLocation((getWidth() - copy.getWidth()) / 2, autoOutput.getY() - copy.getHeight());
+
+    super.paint(g);
   }
 
   @Override
