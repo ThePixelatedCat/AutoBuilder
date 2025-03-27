@@ -486,7 +486,7 @@ public class BuilderFrame extends JFrame implements ActionListener, MouseListene
       formatter.setRoundingMode(RoundingMode.DOWN);
 
       String x = formatter.format(clamp(Math.abs((e.getY() - 900) - 730) * 0.0120191780822, 0.5, 8.274));
-      String y = formatter.format(clamp((e.getX() * 0.0119274074074) - 1.61, 0.5, 7.551));
+      String y = formatter.format(clamp((Math.abs(e.getX() - 945) * 0.0119274074074) - 1.61, 0.5, 7.551));
 
       builder.addToString("g" + x + ":" + y);
 
