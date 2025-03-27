@@ -2,19 +2,22 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 
-public class BuilderFrame extends JFrame implements ActionListener
+public class BuilderFrame extends JFrame implements ActionListener, MouseListener
 {
   private final int buttonSize = 53;
 
@@ -37,6 +40,9 @@ public class BuilderFrame extends JFrame implements ActionListener
 
   private final int bargeVertOffset = 50;
   private final int cageSpacing = 90;
+
+  private final int timeButtonInwardOffset = 250;
+  private final int timeButtonUpOffset = 275;
   
   private JButton cl1;
   private JButton cl2;
@@ -48,6 +54,7 @@ public class BuilderFrame extends JFrame implements ActionListener
   private JButton b2;
   private JButton b3;
   private JButton p;
+  private JButton e;
   
   private ButtonGroup reefFaces;
   private JRadioButton ra;
@@ -69,16 +76,23 @@ public class BuilderFrame extends JFrame implements ActionListener
   private JButton c3;
   private JButton c4;
 
+  private JButton w;
+  private JButton t;
+  private JSlider timeSlider;
+
   private BufferedImage fieldImage;
   private JLabel imageLabel;
 
   private JTextField autoOutput;
   private JButton copy;
 
+  private JCheckBox pickPos;
+
   private AutoBuilder builder;
 
   private List<JButton> simpleButtonList;
   private List<JButton> levelButtonList;
+  private List<JButton> timeButtonList;
 
   private JButton delete;
   
@@ -93,6 +107,12 @@ public class BuilderFrame extends JFrame implements ActionListener
     initLevelButtons();
     
     initOutputText();
+
+    initTimeInput();
+
+    pickPos = new JCheckBox("Pick Position", false);
+    pickPos.addActionListener(this);
+    add(pickPos);
 
     initFieldImage();
     
@@ -109,13 +129,14 @@ public class BuilderFrame extends JFrame implements ActionListener
   {
     try 
     {
-      fieldImage = ImageIO.read(new File("src\\2025_REEFSCAPE.png"));
+      fieldImage = ImageIO.read(getClass().getResource("2025_REEFSCAPE.png"));
     } 
     catch (Exception e) 
     {
       // TODO: handle exception
     }
     imageLabel = new JLabel(new ImageIcon(fieldImage.getScaledInstance(945, 1800, Image.SCALE_DEFAULT)));
+    imageLabel.addMouseListener(this);
     add(imageLabel);
   }
 
@@ -161,7 +182,11 @@ public class BuilderFrame extends JFrame implements ActionListener
     p.addActionListener(this);
     add(p);
 
-    simpleButtonList = List.of(cl1, cl2, cl3, cr1, cr2, cr3, p, b1, b2, b3);
+    e = new JButton("e");
+    e.addActionListener(this);
+    add(e);
+
+    simpleButtonList = List.of(cl1, cl2, cl3, cr1, cr2, cr3, p, b1, b2, b3, e);
   }
 
   private void initFrame()
@@ -299,6 +324,24 @@ public class BuilderFrame extends JFrame implements ActionListener
     add(delete);
   }
 
+  private void initTimeInput()
+  {
+    w = new JButton("w");
+    w.addActionListener(this);
+    add(w);
+
+    t = new JButton("t");
+    t.addActionListener(this);
+    add(t);
+
+    timeSlider = new JSlider(0, 15, 5);
+    timeSlider.setLabelTable(timeSlider.createStandardLabels(1));
+    timeSlider.setPaintLabels(true);
+    add(timeSlider);
+
+    timeButtonList = List.of(t, w);
+  }
+
   @Override
   public void paint(Graphics g) 
   {
@@ -319,6 +362,8 @@ public class BuilderFrame extends JFrame implements ActionListener
     b1.setBounds(0 + 183, 0 + bargeVertOffset, buttonSize, buttonSize);
     b2.setBounds(0 + 183 + cageSpacing, 0 + bargeVertOffset, buttonSize, buttonSize);
     b3.setBounds(0 + 183 + (cageSpacing * 2), 0 + bargeVertOffset, buttonSize, buttonSize);
+
+    e.setBounds((getWidth() - e.getWidth()) / 2, reefVertMidPos - reefCenterVertOffset - 65, buttonSize, buttonSize);
 
     // Face 1
     ra.setBounds(reefHoriMidPos - reefCenterHoriOffset, reefVertMidPos + reefCenterVertOffset, reefFaceButtonSize, reefFaceButtonSize);
@@ -362,7 +407,14 @@ public class BuilderFrame extends JFrame implements ActionListener
     c3.setBounds(getWidth() - 350, 300 + (c1.getHeight() * 3), buttonSize, c3.getHeight());
     c4.setBounds(getWidth() - 350, 300 + (c1.getHeight() * 4), buttonSize, c4.getHeight());
 
-    autoOutput.setFont(autoOutput.getFont().deriveFont(40f));
+    w.setBounds(timeButtonInwardOffset, getHeight() - timeButtonUpOffset, buttonSize, buttonSize);
+    t.setBounds(getWidth() - timeButtonInwardOffset - t.getWidth(), getHeight() - timeButtonUpOffset, buttonSize, buttonSize);
+    timeSlider.setSize(250, timeSlider.getHeight());
+    timeSlider.setLocation((getWidth() - timeSlider.getWidth()) / 2, getHeight() - timeButtonUpOffset);
+
+    pickPos.setLocation(75, getHeight() - 275);
+
+    autoOutput.setFont(autoOutput.getFont().deriveFont(30f));
     autoOutput.setSize(945, autoOutput.getHeight());
     autoOutput.setLocation(0, getHeight() - (autoOutput.getHeight() * 3));
     autoOutput.setText(builder.getString());
@@ -389,7 +441,11 @@ public class BuilderFrame extends JFrame implements ActionListener
     }
     else if (e.getSource() instanceof JButton button) 
     {
-      if (simpleButtonList.stream().anyMatch(simpleButton -> e.getSource() == simpleButton)) 
+      if (timeButtonList.stream().anyMatch(simpleButton -> e.getSource() == simpleButton))
+      {
+        builder.addToString(button.getText() + timeSlider.getValue());
+      }
+      else if (simpleButtonList.stream().anyMatch(simpleButton -> e.getSource() == simpleButton)) 
       {
         builder.addToString(button.getText());
       }
@@ -420,4 +476,36 @@ public class BuilderFrame extends JFrame implements ActionListener
     
     repaint();
   }
+
+  @Override
+  public void mousePressed(MouseEvent e) 
+  {
+    if (pickPos.isSelected())
+    {
+      DecimalFormat formatter = new DecimalFormat("#.##");
+      formatter.setRoundingMode(RoundingMode.DOWN);
+
+      String x = formatter.format(clamp(Math.abs((e.getY() - 900) - 730) * 0.0120191780822, 0.5, 8.274));
+      String y = formatter.format(clamp((e.getX() * 0.0119274074074) - 1.61, 0.5, 7.551));
+
+      builder.addToString("g" + x + ":" + y);
+
+      repaint();
+    }
+  }
+
+  @Override
+  public void mouseReleased(MouseEvent e) {}
+
+  @Override
+  public void mouseEntered(MouseEvent e) {}
+
+  @Override
+  public void mouseExited(MouseEvent e) {}
+
+  @Override
+  public void mouseClicked(MouseEvent e) {}
+
+  public static double clamp(double value, double low, double high)
+    {return Math.max(low, Math.min(value, high));}
 }
