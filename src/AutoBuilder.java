@@ -4,11 +4,16 @@ public class AutoBuilder
 
   public void addToString(String toAdd)
   {
-    autoString = autoString.concat(toAdd.toLowerCase() + ",");
+    autoString = autoString.isEmpty() ? autoString.concat(toAdd.toLowerCase()) : autoString.concat("," + toAdd.toLowerCase());
   }
 
   public String getString()
   {
-    return autoString.substring(0, Math.max(0, autoString.length() - 1));
+    return autoString;
+  }
+
+  public void removeLastItem()
+  {
+    autoString = autoString.substring(0, autoString.contains(",") ? autoString.lastIndexOf(",") : 0);
   }
 }

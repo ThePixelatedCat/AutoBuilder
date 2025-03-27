@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -10,11 +9,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 
 public class BuilderFrame extends JFrame implements ActionListener
 {
@@ -52,20 +50,24 @@ public class BuilderFrame extends JFrame implements ActionListener
   private JButton p;
   
   private ButtonGroup reefFaces;
-  private JToggleButton ra;
-  private JToggleButton rb;
-  private JToggleButton rc;
-  private JToggleButton rd;
-  private JToggleButton re;
-  private JToggleButton rf;
-  private JToggleButton rg;
-  private JToggleButton rh;
-  private JToggleButton ri;
-  private JToggleButton rj;
-  private JToggleButton rk;
-  private JToggleButton rl;
+  private JRadioButton ra;
+  private JRadioButton rb;
+  private JRadioButton rc;
+  private JRadioButton rd;
+  private JRadioButton re;
+  private JRadioButton rf;
+  private JRadioButton rg;
+  private JRadioButton rh;
+  private JRadioButton ri;
+  private JRadioButton rj;
+  private JRadioButton rk;
+  private JRadioButton rl;
 
-  private JComboBox<JButton> reefLevel;
+  private JButton a;
+  private JButton c1;
+  private JButton c2;
+  private JButton c3;
+  private JButton c4;
 
   private BufferedImage fieldImage;
   private JLabel imageLabel;
@@ -76,24 +78,30 @@ public class BuilderFrame extends JFrame implements ActionListener
   private AutoBuilder builder;
 
   private List<JButton> simpleButtonList;
+  private List<JButton> levelButtonList;
+
+  private JButton delete;
   
   public BuilderFrame()
   {
     builder = new AutoBuilder();
-    
+
     initSimpleButtons();
     
     initFaceButtons();
+
+    initLevelButtons();
     
     initOutputText();
+
+    initFieldImage();
     
     initFrame();
 
-    initFieldImage();
-
     reefHoriMidPos = (getWidth() - reefFaceButtonSize) / 2;
     reefVertMidPos = getHeight() - reefVertMidOffset;
-    
+
+    repaint();
     paint(getGraphics());
   }
 
@@ -108,7 +116,6 @@ public class BuilderFrame extends JFrame implements ActionListener
       // TODO: handle exception
     }
     imageLabel = new JLabel(new ImageIcon(fieldImage.getScaledInstance(945, 1800, Image.SCALE_DEFAULT)));
-    imageLabel.setLayout(new FlowLayout());
     add(imageLabel);
   }
 
@@ -170,52 +177,64 @@ public class BuilderFrame extends JFrame implements ActionListener
 
   private void initFaceButtons()
   {
-    ra = new JToggleButton("ra");
+    ra = new JRadioButton("ra");
     ra.addActionListener(this);
+    ra.setActionCommand("ra");
     add(ra);
     
-    rb = new JToggleButton("rb");
+    rb = new JRadioButton("rb");
     rb.addActionListener(this);
+    rb.setActionCommand("rb");
     add(rb);
 
-    rc = new JToggleButton("rc");
+    rc = new JRadioButton("rc");
     rc.addActionListener(this);
+    rc.setActionCommand("rc");
     add(rc);
 
-    rd = new JToggleButton("rd");
+    rd = new JRadioButton("rd");
     rd.addActionListener(this);
+    rd.setActionCommand("rd");
     add(rd);
 
-    re = new JToggleButton("re");
+    re = new JRadioButton("re");
     re.addActionListener(this);
+    re.setActionCommand("re");
     add(re);
 
-    rf = new JToggleButton("rf");
+    rf = new JRadioButton("rf");
     rf.addActionListener(this);
+    rf.setActionCommand("rf");
     add(rf);
 
-    rg = new JToggleButton("rg");
+    rg = new JRadioButton("rg");
     rg.addActionListener(this);
+    rg.setActionCommand("rg");
     add(rg);
 
-    rh = new JToggleButton("rh");
+    rh = new JRadioButton("rh");
     rh.addActionListener(this);
+    rh.setActionCommand("rh");
     add(rh);
 
-    ri = new JToggleButton("ri");
+    ri = new JRadioButton("ri");
     ri.addActionListener(this);
+    ri.setActionCommand("ri");
     add(ri);
 
-    rj = new JToggleButton("rj");
+    rj = new JRadioButton("rj");
     rj.addActionListener(this);
+    rj.setActionCommand("rj");
     add(rj);
 
-    rk = new JToggleButton("rk");
+    rk = new JRadioButton("rk");
     rk.addActionListener(this);
+    rk.setActionCommand("rk");
     add(rk);
 
-    rl = new JToggleButton("rl");
+    rl = new JRadioButton("rl");
     rl.addActionListener(this);
+    rl.setActionCommand("rl");
     add(rl);
 
     reefFaces = new ButtonGroup();
@@ -231,6 +250,38 @@ public class BuilderFrame extends JFrame implements ActionListener
     reefFaces.add(rj);
     reefFaces.add(rk);
     reefFaces.add(rl);
+
+    ra.setSelected(true);
+  }
+
+  private void initLevelButtons()
+  {
+    a = new JButton("a");
+    a.addActionListener(this);
+    a.setActionCommand("a");
+    add(a);
+
+    c1 = new JButton("c1");
+    c1.addActionListener(this);
+    c1.setActionCommand("1");
+    add(c1);
+
+    c2 = new JButton("c2");
+    c2.addActionListener(this);
+    c2.setActionCommand("2");
+    add(c2);
+
+    c3 = new JButton("c3");
+    c3.addActionListener(this);
+    c3.setActionCommand("3");
+    add(c3);
+
+    c4 = new JButton("c4");
+    c4.addActionListener(this);
+    c4.setActionCommand("4");
+    add(c4);
+
+    levelButtonList = List.of(a, c1, c2, c3, c4);
   }
 
   private void initOutputText()
@@ -242,12 +293,18 @@ public class BuilderFrame extends JFrame implements ActionListener
     copy = new JButton("Copy Auto String");
     copy.addActionListener(this);
     add(copy);
+
+    delete = new JButton("Delete Last Item");
+    delete.addActionListener(this);
+    add(delete);
   }
 
   @Override
   public void paint(Graphics g) 
   {
     Insets reefInsets = new Insets(0, 0, 0, 0);
+
+    super.paint(g);
 
     imageLabel.setBounds(0, 0 - 900, 945, 1800);
     p.setBounds(getWidth() - 137 - buttonSize, 0 + 125, buttonSize, buttonSize);
@@ -299,23 +356,36 @@ public class BuilderFrame extends JFrame implements ActionListener
     rl.setBounds(reefHoriMidPos - reefInnerHoriOffset, reefVertMidPos + reefOuterVertOffset, reefFaceButtonSize, reefFaceButtonSize);
     rl.setMargin(reefInsets);
 
+    a.setBounds(getWidth() - 350, 300, buttonSize, a.getHeight());
+    c1.setBounds(getWidth() - 350, 300 + c1.getHeight(), buttonSize, c1.getHeight());
+    c2.setBounds(getWidth() - 350, 300 + (c1.getHeight() * 2), buttonSize, c2.getHeight());
+    c3.setBounds(getWidth() - 350, 300 + (c1.getHeight() * 3), buttonSize, c3.getHeight());
+    c4.setBounds(getWidth() - 350, 300 + (c1.getHeight() * 4), buttonSize, c4.getHeight());
+
     autoOutput.setFont(autoOutput.getFont().deriveFont(40f));
     autoOutput.setSize(945, autoOutput.getHeight());
     autoOutput.setLocation(0, getHeight() - (autoOutput.getHeight() * 3));
     autoOutput.setText(builder.getString());
 
     copy.setMargin(new Insets(1, 1, 1, 1));
-    copy.setLocation((getWidth() - copy.getWidth()) / 2, autoOutput.getY() - copy.getHeight());
+    copy.setLocation(getWidth() / 2, autoOutput.getY() - copy.getHeight());
 
-    super.paint(g);
+    delete.setMargin(new Insets(1, 1, 1, 1));
+    delete.setLocation((getWidth() - (delete.getWidth() * 2)) / 2, autoOutput.getY() - delete.getHeight());
   }
 
   @Override
   public void actionPerformed(ActionEvent e) 
   {
+    repaint();
+
     if (e.getSource() == copy)
     {
       Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(autoOutput.getText()), null);
+    }
+    else if (e.getSource() == delete)
+    {
+      builder.removeLastItem();
     }
     else if (e.getSource() instanceof JButton button) 
     {
@@ -323,8 +393,31 @@ public class BuilderFrame extends JFrame implements ActionListener
       {
         builder.addToString(button.getText());
       }
-    }
+      else if (levelButtonList.stream().anyMatch(simpleButton -> e.getSource() == simpleButton)) 
+      {
+        if (button.getText() == "a")
+        {
+          int faceNumber = 
+          switch (reefFaces.getSelection().getActionCommand())
+          {
+            case "ra", "rb" -> 1;
+            case "rc", "rd" -> 2;
+            case "re", "rf" -> 3;
+            case "rg", "rh" -> 4;
+            case "ri", "rj" -> 5;
+            case "rk", "rl" -> 6;
+            default -> 1;
+          };
 
+          builder.addToString(button.getText() + faceNumber);
+        }
+        else
+        {
+          builder.addToString(reefFaces.getSelection().getActionCommand() + button.getActionCommand());
+        }
+      }
+    }
+    
     repaint();
   }
 }
