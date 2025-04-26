@@ -100,6 +100,17 @@ public class BuilderFrame extends JFrame implements ActionListener, MouseListene
   {
     builder = new AutoBuilder();
 
+    addWindowListener
+    (
+      new WindowAdapter() 
+      {
+        public void windowClosing(WindowEvent e) 
+        {
+          builder.writeToSave();
+        };
+      }
+    );
+
     initSimpleButtons();
     
     initFaceButtons();
@@ -416,7 +427,7 @@ public class BuilderFrame extends JFrame implements ActionListener, MouseListene
 
     autoOutput.setFont(autoOutput.getFont().deriveFont(30f));
     autoOutput.setSize(945, autoOutput.getHeight());
-    autoOutput.setLocation(0, getHeight() - (autoOutput.getHeight() * 3));
+    autoOutput.setLocation(0, getHeight() - (autoOutput.getHeight() * 3) - 30);
     autoOutput.setText(builder.getString());
 
     copy.setMargin(new Insets(1, 1, 1, 1));
